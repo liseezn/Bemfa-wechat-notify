@@ -3,7 +3,7 @@
  * Plugin Name: 微信通知推送
  * Plugin URI: https://github.com/liseezn/Bemfa-wechat-notify
  * Description: 基于巴法云微信接口的WordPress推送插件，支持设备预警/提醒，后台可视化配置，推送事件开关，一键测试推送，日志开关，POST/GET双请求方式，短代码/函数双调用，完全贴合官方API规范。
- * Version: 1.
+ * Version: 1.4
  * Author: liseezn
  * Author URI: https://github.com/liseezn
  * License: GPLv2 or later
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 }
 
 // ====================== 插件核心常量定义 ======================
-define('BEMFA_WECHAT_VERSION', '1.4.1');
+define('BEMFA_WECHAT_VERSION', '1.4');
 define('BEMFA_WECHAT_PLUGIN_FILE', __FILE__);
 define('BEMFA_WECHAT_LOG_TABLE', 'bemfa_wechat_logs'); // 日志表名
 
@@ -155,7 +155,7 @@ function bemfa_wechat_render_log_page() {
     $rate = $total > 0 ? round(($total_success / $total) * 100, 2) : 0;
     ?>
     <div class="wrap" style="max-width:1400px;margin:0 auto;">
-        <h1>巴法云推送日志 <span style="font-size:14px;color:#666;">(共 <?php echo $total; ?> 条记录)</span></h1>
+        <h1>推送日志 <span style="font-size:14px;color:#666;">(共 <?php echo $total; ?> 条记录)</span></h1>
         <!-- 筛选表单 -->
         <form method="get" action="<?php echo admin_url('options-general.php'); ?>">
             <input type="hidden" name="page" value="bemfa-wechat-logs">
@@ -281,15 +281,15 @@ function bemfa_wechat_get_settings() {
         'event_post'        => false,
         'event_comment'     => false,
         'event_woo'         => false,
-        // 【事件增强】6个新增独立开关（默认关闭）
+        // 6个事件独立开关（默认关闭）
         'event_comment_new'  => false, // 新评论即时提交
         'event_user'         => false, // 新用户注册
         'event_page'         => false, // 新页面发布
         'event_cpt'          => false, // 自定义文章发布
         'event_woo_paid'     => false, // Woo订单付款
         'event_woo_complete' => false, // Woo订单完成
-        // 【日志增强】日志相关配置
-        'enable_log'        => true,
+        // 日志相关配置
+        'enable_log'        => false,
         'enable_error_log'  => false,
         'log_retention_days'=> 30,
         'auto_clean_logs'   => false,
@@ -307,13 +307,13 @@ function bemfa_wechat_register_settings() {
 
     // 注册配置节 - 适配标签页：页面名改为 前缀+配置节名
     add_settings_section('bemfa_sec_main', '核心配置（巴法云控制台获取）<span style="color:red;">*</span>', 'bemfa_wechat_sec_main_desc', 'bemfa-wechat-page-bemfa_sec_main');
-    add_settings_section('bemfa_sec_event', '自动推送事件开关【6大新增+原生】', 'bemfa_wechat_sec_event_desc', 'bemfa-wechat-page-bemfa_sec_event');
-    add_settings_section('bemfa_sec_log', '日志系统配置【专属数据库】', 'bemfa_wechat_sec_log_desc', 'bemfa-wechat-page-bemfa_sec_log');
+    add_settings_section('bemfa_sec_event', '推送事件开关', 'bemfa_wechat_sec_event_desc', 'bemfa-wechat-page-bemfa_sec_event');
+    add_settings_section('bemfa_sec_log', '日志系统配置', 'bemfa_wechat_sec_log_desc', 'bemfa-wechat-page-bemfa_sec_log');
     add_settings_section('bemfa_sec_advanced', '高级配置（协议/请求）', 'bemfa_wechat_sec_advanced_desc', 'bemfa-wechat-page-bemfa_sec_advanced');
     add_settings_section('bemfa_sec_test', '一键测试推送', 'bemfa_wechat_sec_test_desc', 'bemfa-wechat-page-bemfa_sec_test');
 
     // 核心配置字段 - 适配标签页
-    add_settings_field('bemfa_field_uid', '巴法云32位UID', 'bemfa_wechat_field_uid', 'bemfa-wechat-page-bemfa_sec_main', 'bemfa_sec_main');
+    add_settings_field('bemfa_field_uid', '巴法云32位私钥', 'bemfa_wechat_field_uid', 'bemfa-wechat-page-bemfa_sec_main', 'bemfa_sec_main');
     add_settings_field('bemfa_field_device', '默认设备名', 'bemfa_field_device', 'bemfa-wechat-page-bemfa_sec_main', 'bemfa_sec_main');
     add_settings_field('bemfa_field_group', '消息分组', 'bemfa_field_group', 'bemfa-wechat-page-bemfa_sec_main', 'bemfa_sec_main');
 
@@ -374,9 +374,9 @@ function bemfa_wechat_sanitize_settings($input) {
 
 // 配置节描述
 function bemfa_wechat_sec_main_desc() {
-    echo '<p class="description">1. 巴法云控制台<a href="https://cloud.bemfa.com/" target="_blank">点此进入</a>，绑定微信后在个人中心获取32位UID；</p>';
+    echo '<p class="description">1. 巴法云控制台（获取32位私钥）<a href="https://cloud.bemfa.com/tcp/devicemqtt.html" target="_blank">点此进入</a>，一定要绑定微信!!!；</p>';
     echo '<p class="description">2. 分组仅支持字母/数字，不存在会自动创建，默认default；</p>';
-    echo '<p class="description">3. UID为必填项，错误会导致所有推送失败。</p>';
+    echo '<p class="description">3. 私钥为必填项，错误会导致所有推送失败。</p>';
 }
 function bemfa_wechat_sec_event_desc() { echo '<p class="description">开启后对应事件触发时自动推送微信通知，每个事件独立开关，按需开启！</p>'; }
 function bemfa_wechat_sec_log_desc() {
@@ -497,7 +497,7 @@ function bemfa_wechat_api_request($api_type, $params = []) {
 
     // 必传参数校验
     if (empty($request_params['uid']) || strlen($request_params['uid']) !== 32) {
-        $msg = 'UID错误：必须是32位纯字符串';
+        $msg = '私钥错误：必须是32位纯字符串';
         bemfa_wechat_log($msg, ['api_type'=>$api_type,'request_method'=>strtoupper($method),'device'=>$request_params['device'],'status'=>'error']);
         return ['success' => false, 'msg' => $msg, 'data' => []];
     }
@@ -583,11 +583,11 @@ function bemfa_wechat_alert($message, $params = []) {
     return bemfa_wechat_api_request('alert', $params);
 }
 
-// ====================== 【模块4：后台主页面】- 融合状态卡片+快捷操作+配置+测试（全套美化） ======================
+// ====================== 【模块4：后台主页面】- 融合状态卡片+快捷操作+配置+测试 ======================
 function bemfa_wechat_add_admin_menu() {
     add_options_page(
-        '巴法云微信推送',
-        '巴法云微信推送',
+        '自动推送',
+        '自动推送',
         'manage_options',
         'bemfa-wechat-page',
         'bemfa_wechat_render_page'
@@ -604,7 +604,7 @@ function bemfa_wechat_system_status() {
     $status['db_table'] = ['label'=>'日志表状态','value'=>$table_exists ? '正常' : '缺失','good'=>$table_exists,'icon'=>$table_exists ? 'database' : 'error'];
     // 检查配置
     $settings = bemfa_wechat_get_settings();
-    $status['config'] = ['label'=>'UID配置状态','value'=>empty($settings['uid']) ? '未配置（推送失败）' : '已配置','good'=>!empty($settings['uid']),'icon'=>!empty($settings['uid']) ? 'yes' : 'no'];
+    $status['config'] = ['label'=>'私钥配置状态','value'=>empty($settings['uid']) ? '未配置（推送失败）' : '已配置','good'=>!empty($settings['uid']),'icon'=>!empty($settings['uid']) ? 'yes' : 'no'];
     // 检查最近推送
     if ($table_exists) {
         $last_success = $wpdb->get_var("SELECT time FROM $table_name WHERE status='success' ORDER BY time DESC LIMIT 1");
