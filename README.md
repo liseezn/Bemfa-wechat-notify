@@ -1,45 +1,67 @@
 # Bemfa-wechat-notify
-
 ![WordPress Compatible](https://img.shields.io/badge/WordPress-5.0%2B-blue)
 ![PHP Compatible](https://img.shields.io/badge/PHP-7.0%2B-green)
 ![License](https://img.shields.io/badge/License-GPLv2-orange)
+![Version](https://img.shields.io/badge/Version-1.2-brightgreen)
 
-基于巴法云微信接口开发的WordPress插件，实现微信消息推送功能，支持设备预警、设备提醒两类推送，提供后台可视化配置、短代码调用、函数调用三种使用方式，轻量无依赖，适配所有主流WP版本。
+基于巴法云微信接口开发的WordPress插件，**严格贴合官方API规范**，实现微信消息预警/提醒双类型推送。新增**可视化协议切换、日志开关、POST/GET双请求方式、一键测试推送、自动事件开关**，提供后台可视化配置、短代码/函数调用，轻量无依赖，原生兼容WooCommerce，适配所有主流WP版本，**无缝兼容1.0版本所有用法**。
 
 ## 📌 项目简介
+本插件是巴法云微信通知接口在WordPress生态的深度适配插件，**v1.2全新升级**，完全遵循巴法云官方API文档规范，无需编写代码即可实现WP站点自动化微信推送，同时保留高度可扩展性，满足开发人员个性化需求。
 
-本插件是巴法云微信通知接口在WordPress生态的官方适配插件，无需编写复杂代码，即可实现WP站点各类事件（文章发布、评论提交、订单生成等）的微信消息推送，同时支持开发人员二次扩展，满足个性化推送需求。
+核心适配巴法云全套微信推送接口，**可视化选择请求方式**，无需手动修改代码：
+- 设备预警接口：`wechatAlertJson`(POST) / `wechatAlert`(GET)，适用于站点告警、异常通知等重要消息
+- 设备提醒接口：`wechatWarnJson`(POST) / `wechatWarn`(GET)，适用于日常通知、常规提醒等普通消息
+- GET方式下`warn`接口**自动追加`type=2`必填参数**，完全贴合官方规范
 
-核心适配巴法云两个核心接口：
-- 设备预警接口（wechatAlertJson）：适用于站点告警、异常通知等重要消息
-- 设备提醒接口（wechatWarnJson）：适用于日常通知、常规提醒等普通消息
+## 📝 版本更新日志
+### v1.2（2026-02-01）【核心升级】
+🔥 **新增** 可视化协议切换：HTTP/HTTPS一键选择，本地/硬件用HTTP(80端口)，线上用HTTPS(443端口)
+🔥 **新增** 日志开关：后台一键开启/关闭，减少站点日志冗余，调试/生产环境按需切换
+🔥 **新增** POST/GET双请求方式：严格贴合巴法云API，JSON/URL传参自动适配，无需手动改代码
+🔥 **新增** 后台自动事件开关：文章发布/评论审核/WooCommerce新订单推送，开箱即用，无需手动加钩子
+🔥 **新增** 一键测试推送：实时验证配置/接口连通性，推送结果即时显示，快速排错
+🔥 **新增** 后台分层配置：核心配置/事件开关/高级配置/测试推送，模块清晰，操作简单
+🔥 **优化** 配置数据清洗：自动过滤非法字符，分组仅保留字母/数字，配置更健壮
+🔥 **优化** 插件激活/卸载：自动初始化/清理配置，无冗余数据残留
+✅ **兼容** 1.0版本所有短代码/函数调用，无缝升级无需修改原有代码
+
+### v1.0
+🖥️ 基础可视化配置（UID/设备名/分组）
+🔧 短代码/PHP函数双调用方式
+📱 适配巴法云POST接口（预警/提醒）
+🚀 轻量无依赖，原生WP代码开发
+🔍 内置错误日志记录，支持二次扩展
 
 ## ✨ 核心特性
-
-- 🖥️ **可视化配置**：WP后台直接设置巴法云UID、默认设备名、默认分组，无需修改代码
-- 🔧 **多调用方式**：支持短代码（非开发人员）、函数调用（开发人员）、快捷函数三种方式
-- 📱 **完整适配**：完美对接巴法云微信接口，支持自定义设备名、分组、跳转链接
-- 🚀 **轻量无依赖**：纯原生WP代码开发，不依赖任何第三方插件，不占用多余资源
-- 🔍 **错误排查**：内置错误日志记录，后台可查看推送失败原因，快速定位问题
-- 💡 **兼容广泛**：适配WP 5.0+所有版本，PHP 7.0+，兼容各类主题/插件，无冲突
-- 🔄 **灵活扩展**：支持二次开发，可快速添加定时推送、多UID推送等自定义功能
+- 🖥️ **分层可视化配置**：核心配置/事件开关/高级配置/测试推送四节，无需修改代码，新手友好
+- 🔧 **多调用方式**：短代码（非开发）、函数调用（开发）、**自动化事件推送**（开箱即用）三种方式
+- 📡 **全API适配**：严格贴合巴法云官方API，支持POST/GET双请求方式，HTTP/HTTPS一键切换
+- ✅ **自动化推送**：文章发布/评论审核/WooCommerce新订单，后台勾选即生效，无需手动开发
+- 🚀 **轻量无依赖**：纯原生WP代码开发，不依赖第三方插件，不占用多余服务器资源
+- 📝 **可控日志记录**：日志开关一键切换，仅记录推送相关信息，无冗余，后台可查看
+- 🔍 **一键测试推送**：实时验证配置正确性，推送结果即时显示，快速定位接口/配置问题
+- 💡 **广泛兼容**：适配WP 5.0+、PHP 7.0+，兼容所有主题/插件，原生支持WooCommerce电商站点
+- 🔄 **无缝兼容**：完全兼容1.0版本所有短代码/函数用法，升级后原有功能正常使用
+- 🔐 **隐私友好**：仅在站点本地数据库存储配置信息，不收集、不传输任何站点/用户数据
 
 ## 📋 前置准备
-
-使用插件前，需先完成巴法云微信绑定，获取用户私钥UID：
+使用插件前，需先完成巴法云微信绑定并获取UID，**步骤不变，与1.0版本一致**：
 1. 访问 [巴法云控制台](https://cloud.bemfa.com/)，注册/登录账号
-2. 在控制台绑定微信账号，按照提示关注公众号「巴法云」完成自动绑定
-3. 绑定成功后，在巴法云控制台「个人中心/密钥管理」处，复制你的 **用户私钥UID**（32位字符串，必填）
+2. 按提示关注微信公众号「巴法云」，完成账号与微信的自动绑定
+3. 在巴法云控制台「个人中心/密钥管理」，复制你的 **用户私钥UID**（32位字符串，插件必填）
+4. 确认使用环境（推荐）：
+   - 线上WP站点：HTTPS协议 + POST请求方式
+   - 本地/硬件设备：HTTP协议 + GET请求方式
 
 ## 🔧 安装步骤
-
-提供两种安装方式，任选其一即可：
+支持两种安装方式，**与1.0版本完全一致**，升级用户直接覆盖插件文件即可，原有配置自动保留：
 
 ### 方式1：后台上传安装（推荐，非开发人员）
 1. 从 GitHub Releases 页面下载插件ZIP压缩包：[Releases](https://github.com/liseezn/Bemfa-wechat-notify/releases)
 2. 登录WordPress后台 → 插件 → 安装插件 → 上传插件
 3. 选择下载的ZIP压缩包，点击「安装现在」
-4. 安装完成后，点击「启用插件」，即可进入配置页面
+4. 安装完成后，点击「启用插件」，进入**设置 → 巴法云微信通知**配置
 
 ### 方式2：手动上传安装（开发人员）
 1. 克隆本仓库：
@@ -49,211 +71,217 @@
 2. 将插件文件夹 `Bemfa-wechat-notify` 复制到WP插件目录：`wp-content/plugins/`
 3. 登录WordPress后台 → 插件 → 已安装插件，找到「巴法云微信通知推送」，点击「启用」
 
-## ⚙️ 基础配置
+## ⚙️ 后台可视化配置
+**v1.2核心升级点**，插件启用后进入「设置 → 巴法云微信通知」，分四节配置，**带*为必填项**，配置完成后点击「保存配置」，**支持一键测试推送验证**：
 
-插件启用后，进入配置页面完成基础设置（必填项：巴法云UID）：
-1. 登录WP后台 → 设置 → 巴法云微信通知
-2. 填写以下配置项（带*为必填）：
-   - 巴法云用户私钥UID*：粘贴你在巴法云控制台获取的UID
-   - 默认设备名称：推送消息时显示的设备名，默认「WordPress站点」，可自定义
-   - 默认消息分组：消息分组（仅限字母/数字），不填默认「default」，分组不存在会自动创建
-3. 点击「保存配置」，完成基础设置，即可开始使用推送功能
+### 1. 核心配置（巴法云控制台获取，原1.0基础配置）
+| 配置项 | 说明 | 示例 | 是否必填 |
+|--------|------|------|----------|
+| 巴法云用户私钥UID | 巴法云个人中心获取，无UID无法推送 | `4d9ec352e0376f2110a0c601a2857225` | ✅ 是 |
+| 默认设备名称 | 推送消息显示的设备标识，自定义 | `我的WP博客`/`WP电商站点` | ❌ 否 |
+| 默认消息分组 | 消息分组（仅限字母/数字），不存在自动创建 | `wp_notify`/`default` | ❌ 否 |
+| 使用HTTP协议 | 本地/硬件设备勾选，线上站点不勾选，自动切换80/443端口 | 本地环境勾选 | ❌ 否 |
+
+### 2. 推送事件开关（v1.2新增，开箱即用）
+勾选对应事件，**触发时自动推送微信消息**，无需手动添加任何钩子代码，原生兼容WooCommerce：
+- ✅ 新文章发布时推送：仅普通文章（post类型），排除草稿/修订版
+- ✅ 新评论审核通过时推送：仅审核通过的评论，避免垃圾评论推送
+- ✅ WooCommerce新订单生成时推送：需安装并启用WooCommerce，自动推送订单核心信息
+
+### 3. 高级配置（v1.2新增，贴合巴法云API）
+| 配置项 | 可选值 | 默认值 | 说明 |
+|--------|--------|--------|------|
+| 是否开启插件日志 | 开启/关闭 | 开启 | 开启后记录推送成功/失败日志，关闭后不记录，减少冗余 |
+| 接口请求方式 | POST/GET | POST | 严格贴合巴法云API：POST=JSON传参，GET=URL传参（warn接口自动加type=2） |
+
+### 4. 测试推送（v1.2新增，快速排错）
+点击「发送测试消息」按钮，实时验证：
+- 巴法云UID配置正确性
+- 接口连通性（HTTP/HTTPS/POST/GET）
+- 微信绑定状态
+- 推送结果即时显示在按钮下方，成功会收到微信消息
 
 ## 📖 使用教程
+**v1.2保留1.0版本所有调用方式**，短代码、PHP函数完全兼容，无需修改原有代码；同时新增**自动化事件推送**，后台勾选即生效，开箱即用。
 
-插件提供3种调用方式，适配非开发人员、开发人员不同需求，所有调用方式均支持自定义消息、设备名、分组、跳转链接。
+### 方式1：自动化事件推送（v1.2新增，推荐，零开发）
+**无需编写任何代码**，在「推送事件开关」中勾选需要的场景，保存配置后自动触发，消息为系统优化模板，包含核心信息：
+1. **新文章发布**：推送「文章标题+访问链接」
+2. **评论审核通过**：推送「评论人+评论内容（前50字）+所属文章+评论链接」
+3. **WooCommerce新订单**：推送「订单号+下单人+订单金额+下单时间+后台编辑链接」
 
-### 方式1：短代码调用（非开发人员推荐）
+### 方式2：短代码调用（与1.0版本完全一致，非开发人员推荐）
+可在「文章/页面/自定义小工具/页面构建器」中使用，**仅管理员可见推送结果**，普通游客无感知，支持基础/高级用法。
 
-可直接在「文章/页面/自定义小工具」中使用短代码，推送微信消息，**仅管理员可见推送结果**，普通游客无感知。
-
-#### 基础用法（仅传消息，使用默认配置）
+#### 基础用法（仅传消息，使用后台默认配置）
 ```markdown
-# 设备预警推送（适用于告警、异常通知）
-[bafayun_alert msg="WP站点检测到异常访问！"]
+# 设备预警推送（重要告警，如站点异常）
+[bafayun_alert msg="WP站点检测到异常IP访问，请注意排查！"]
 
-# 设备提醒推送（适用于日常通知、常规提醒，推荐）
-[bafayun_warn msg="您的站点有新评论待审核！"]
+# 设备提醒推送（日常通知，如新评论/新订单）
+[bafayun_warn msg="您的站点有新评论待审核，点击查看！"]
 ```
 
-#### 高级用法（自定义设备名/分组/跳转链接）
+#### 高级用法（自定义设备名/分组/跳转链接，覆盖后台默认）
 ```markdown
 [bafayun_warn 
-  msg="新订单生成：订单号123456，金额99元" 
-  device="WP电商站点"  # 自定义设备名（覆盖默认配置）
-  group="wp_order"     # 自定义分组（覆盖默认配置）
-  url="https://你的站点.com/wp-admin/edit.php?post_type=shop_order"  # 点击消息跳转链接
+  msg="新表单提交：用户XXX提交了联系我们表单" 
+  device="WP站点-表单通知"  # 自定义设备名
+  group="wp_form"           # 自定义分组（仅限字母/数字）
+  url="https://你的站点.com/wp-admin/edit.php?post_type=wpforms"  # 合法跳转URL
 ]
 ```
 
-### 方式2：函数调用（开发人员推荐）
+### 方式3：PHP函数调用（与1.0版本完全一致，开发人员推荐）
+可在「主题functions.php/自定义插件/代码片段」中调用，实现**自定义场景推送**（如站点异常、会员注册、表单提交等），支持基础/高级用法。
 
-可在「主题functions.php、其他插件代码」中调用核心函数，实现**触发式自动推送**（如文章发布、评论提交、订单生成时自动推送）。
-
-#### 基础用法（仅传消息，使用默认配置）
+#### 核心函数（与1.0版本一致）
 ```php
-// 设备预警推送
-bafayun_wechat_alert("WP站点磁盘空间不足，剩余空间不足10%！");
+// 设备预警推送（重要告警，对应alert接口）
+bafayun_wechat_alert($message, $device = '', $group = '', $url = '');
 
-// 设备提醒推送
-bafayun_wechat_warn("您的文章《XXX》已成功发布！");
+// 设备提醒推送（日常通知，对应warn接口，推荐）
+bafayun_wechat_warn($message, $device = '', $group = '', $url = '');
 
-// 全局快捷函数（默认提醒类型，指定type=alert为预警）
-bafayun_wechat_push("新评论提醒：用户XXX评论了文章《XXX》");
-bafayun_wechat_push("站点异常：数据库连接失败！", 'alert'); // 预警推送
+// 全局快捷函数（默认提醒类型，type=alert为预警）
+bafayun_wechat_push($message, $type = 'warn');
 ```
 
-#### 高级用法（自定义设备名/分组/跳转链接）
+#### 参数说明（与1.0版本一致）
+| 参数 | 类型 | 是否必填 | 说明 |
+|------|------|----------|------|
+| $message | string | ✅ 是 | 推送的微信消息内容，不能为空 |
+| $device | string | ❌ 否 | 自定义设备名，留空使用后台默认配置 |
+| $group | string | ❌ 否 | 自定义分组（仅限字母/数字），留空使用后台默认配置 |
+| $url | string | ❌ 否 | 点击消息跳转的合法URL，留空则无跳转 |
+| $type | string | ❌ 否 | 推送类型：`alert`（预警）/`warn`（提醒），默认`warn` |
+
+#### 调用示例（与1.0版本一致）
 ```php
-// 推送新订单消息，自定义设备名、分组，点击跳转订单详情页
-bafayun_wechat_warn(
-    "【新订单提醒】订单号：NO.20260201001，金额：99元，状态：待付款", // 消息内容
-    "WP商城站点", // 自定义设备名
-    "wp_shop_order", // 自定义分组
-    "https://your-site.com/wp-admin/post.php?post=123&action=edit" // 跳转链接（订单详情）
-);
+// 基础用法：仅传消息，使用后台默认配置
+bafayun_wechat_warn("新用户注册：用户名test123，注册时间2026-02-01");
+
+// 高级用法：自定义设备名/分组+跳转链接（站点异常告警）
+bafayun_wechat_alert("站点异常：磁盘空间不足10%！", "WP服务器", "wp_alert", "https://你的站点.com/wp-admin/");
+
+// 快捷函数：指定为预警类型
+bafayun_wechat_push("数据库连接失败，站点暂时无法访问！", 'alert');
 ```
 
-### 方式3：实用场景示例（开发人员参考）
-
-结合WP钩子，实现触发式自动推送，以下是常用场景示例，可直接复制到主题functions.php中使用。
-
-#### 示例1：文章发布时自动推送
+### 方式4：自定义场景推送（开发人员，基于1.0扩展）
+若需实现**后台事件开关未覆盖的场景**（如会员注册、表单提交、订单支付成功），可结合WP/WooCommerce钩子调用函数，示例如下：
 ```php
-// 文章发布后，自动推送微信提醒（排除草稿、修订版）
-add_action('publish_post', 'bafayun_publish_post_push', 10, 2);
-function bafayun_publish_post_push($post_ID, $post) {
-    // 排除自定义文章类型，仅推送普通文章
-    if ($post->post_type != 'post') return;
-    // 组装消息内容（包含文章标题、链接）
-    $msg = "【新文章发布】\n" . $post->post_title . "\n访问链接：" . get_permalink($post_ID);
-    // 执行推送（使用默认配置，设备提醒类型）
+// 示例：WPForms表单提交后自动推送
+add_action('wpforms_process_complete', 'custom_wpforms_push', 10, 4);
+function custom_wpforms_push($fields, $entry, $form_data, $entry_id) {
+    $msg = "【新表单提交】\n表单名称：{$form_data['settings']['form_title']}\n提交时间：" . date('Y-m-d H:i:s');
+    bafayun_wechat_warn($msg, 'WP站点-表单通知', 'wp_form', admin_url('admin.php?page=wpforms-entries&view=details&entry_id=' . $entry_id));
+}
+
+// 示例：WooCommerce订单支付成功后推送
+add_action('woocommerce_order_status_completed', 'custom_wc_pay_success_push');
+function custom_wc_pay_success_push($order_id) {
+    $order = wc_get_order($order_id);
+    $msg = "【订单支付成功】\n订单号：{$order->get_order_number()}\n支付金额：{$order->get_formatted_order_total()}\n支付时间：" . date('Y-m-d H:i:s');
+    bafayun_wechat_warn($msg, 'WP电商站点', 'wp_pay', admin_url('post.php?post=' . $order_id . '&action=edit'));
+}
+```
+
+## 🔍 错误排查（v1.2新增专属排查点）
+推送失败按以下步骤排查，**优先使用一键测试推送定位问题**，测试推送会直接提示失败原因：
+1. **基础配置检查**：确认UID填写正确、微信已绑定巴法云并关注公众号，配置后已点击「保存配置」
+2. **测试推送验证**：点击「发送测试消息」，根据提示排查（如「未配置UID」「接口请求失败」）
+3. **协议/请求方式检查**：本地/硬件设备需勾选「使用HTTP协议」+ 选择GET方式，线上站点用HTTPS+POST
+4. **GET方式专属检查**：分组需为**纯字母/数字**，插件已自动为warn接口加`type=2`，无需手动传参
+5. **日志排查**：开启插件日志后，在WP后台「工具 → 站点健康 → 日志」查看PHP错误日志，格式为`[Bemfa WeChat] 日志内容`
+6. **消息内容检查**：确保消息不为空，避免过多特殊字符，GET方式因URL传参，特殊字符会自动转义
+7. **网络/端口检查**：本地设备需确保网络能访问`http://apis.bemfa.com`（80端口），线上站点确保443端口开放
+8. **WooCommerce专属检查**：确认已安装并启用WooCommerce，再勾选「新订单生成时推送」
+
+## 🚀 扩展与二次开发
+v1.2已实现大部分可视化配置，减少手动开发需求；同时保留原生扩展能力，基于1.0版本扩展逻辑，**仅移除手动修改协议/请求方式的操作**（已可视化）。
+
+### 扩展1：添加自定义事件开关
+若需在后台添加自定义场景的推送开关，可扩展插件的配置注册逻辑，添加新的开关字段，结合钩子实现：
+```php
+// 步骤1：在后台添加自定义开关字段（参考插件中register_setting部分）
+// 步骤2：结合开关判断是否推送
+add_action('xxx_custom_hook', 'custom_event_push');
+function custom_event_push($params) {
+    $settings = bemfa_wechat_get_settings();
+    if (!$settings['event_custom']) return; // 自定义开关未开启则不推送
+    $msg = "【自定义事件推送】\n内容：{$params['msg']}";
     bafayun_wechat_warn($msg);
 }
 ```
 
-#### 示例2：新评论提交时自动推送
+### 扩展2：多UID推送
+若需推送到多个微信账号，可扩展配置页添加多UID字段，循环调用核心推送函数：
 ```php
-// 新评论审核通过后，自动推送微信提醒
-add_action('comment_post', 'bafayun_comment_post_push', 10, 2);
-function bafayun_comment_post_push($comment_ID, $comment_approved) {
-    // 仅推送审核通过的评论（避免垃圾评论推送）
-    if ($comment_approved != 1) return;
-    $comment = get_comment($comment_ID);
-    $post = get_post($comment->comment_post_ID);
-    // 组装消息内容（包含评论人、评论内容、所属文章）
-    $msg = "【新评论提醒】\n评论人：" . $comment->comment_author . "\n评论内容：" . mb_substr($comment->comment_content, 0, 50, 'utf-8') . "...\n所属文章：" . $post->post_title;
-    // 执行推送，点击消息跳转至评论所在文章
-    bafayun_wechat_warn($msg, '', '', get_permalink($post->ID) . '#comment-' . $comment_ID);
+function bafayun_multi_uid_push($message) {
+    $settings = bemfa_wechat_get_settings();
+    // 从扩展配置中获取多UID，示例为固定数组，可改为后台配置
+    $uids = ['uid1', 'uid2', 'uid3']; 
+    foreach ($uids as $uid) {
+        // 调用底层API请求函数，指定不同UID
+        bemfa_wechat_api_request('warn', [
+            'message' => $message,
+            'device' => $settings['device'],
+            'group' => $settings['group'],
+            'uid' => $uid // 覆盖默认UID
+        ]);
+    }
 }
 ```
 
-#### 示例3：Woocommerce新订单推送（电商站点）
+### 扩展3：定时推送（站点统计/巡检）
+结合WP定时任务，实现每日/每周站点统计推送，配合WP Crontrol插件管理定时任务：
 ```php
-// 适用于安装了Woocommerce插件的电商站点，新订单生成时自动推送
-add_action('woocommerce_new_order', 'bafayun_woocommerce_new_order_push');
-function bafayun_woocommerce_new_order_push($order_id) {
-    $order = wc_get_order($order_id);
-    // 组装订单消息（包含订单号、金额、下单人）
-    $msg = "【新订单提醒】\n订单号：" . $order->get_order_number() . "\n下单人：" . $order->get_billing_full_name() . "\n订单金额：" . $order->get_formatted_order_total() . "\n下单时间：" . $order->get_date_created()->format('Y-m-d H:i:s');
-    // 执行推送，点击消息跳转至后台订单编辑页
-    bafayun_wechat_warn($msg, 'WP电商站点', 'wp_order', admin_url('post.php?post=' . $order_id . '&action=edit'));
-}
-```
-
-## 🔍 错误排查
-
-若推送失败，按以下步骤排查，优先检查基础配置和必填项：
-1. 基础配置检查：确认巴法云UID填写正确、微信已绑定巴法云并关注公众号
-2. 消息内容检查：确保推送消息不为空，避免特殊字符过多导致解析失败
-3. 错误日志查看：WP后台 → 工具 → 站点健康 → 日志 → 查看「PHP错误日志」，插件会记录所有推送相关错误（如接口请求失败、UID错误等）
-4. SSL问题：若站点无SSL证书，可修改插件核心代码，将接口URL的`https`改为`http`，并关闭SSL验证（参考下方扩展说明）
-5. 分组规则：消息分组仅限「字母/数字」，不可包含中文、符号，否则会自动过滤为空（默认改为default）
-
-## 🔄 扩展与二次开发
-
-本插件支持二次开发，可根据需求扩展功能，以下是常用扩展场景示例：
-
-### 扩展1：适配硬件设备HTTP协议
-
-若需在硬件端（如单片机）使用，可修改插件核心请求函数，切换为HTTP接口：
-```php
-// 找到插件中 bafayun_wechat_post_request 函数，修改以下两处：
-// 1. 接口URL（HTTPS改为HTTP）
-$api_url = 'http://apis.bemfa.com/vb/wechat/v1/wechatAlertJson'; // 预警接口
-$api_url = 'http://apis.bemfa.com/vb/wechat/v1/wechatWarnJson'; // 提醒接口
-
-// 2. 关闭SSL验证（硬件端无需SSL）
-'sslverify' => false,
-```
-
-### 扩展2：添加定时推送功能
-
-结合WP定时任务（WP Cron），实现每日/每周站点统计推送，需配合WP Crontrol等定时任务管理插件：
-```php
-// 注册定时任务，每日固定时间推送站点统计
-add_action('bafayun_daily_push', 'bafayun_daily_stat_push');
-function bafayun_daily_stat_push() {
-    // 获取站点统计数据
+// 注册定时任务
+add_action('bafayun_daily_stat_push', 'bafayun_daily_stat');
+function bafayun_daily_stat() {
     $post_count = wp_count_posts()->publish; // 已发布文章数
     $comment_count = wp_count_comments()->approved; // 已审核评论数
-    // 组装消息
-    $msg = "【站点每日统计】\n日期：" . date('Y-m-d') . "\n已发布文章：{$post_count} 篇\n已审核评论：{$comment_count} 条";
-    // 执行推送
-    bafayun_wechat_warn($msg);
+    $user_count = count_users()['total_users']; // 注册用户数
+    $msg = "【站点每日统计】\n日期：" . date('Y-m-d') . "\n文章数：{$post_count}篇\n评论数：{$comment_count}条\n用户数：{$user_count}人";
+    bafayun_wechat_warn($msg, 'WP站点-统计通知', 'wp_stat');
 }
-```
-
-### 扩展3：多UID/多微信账号推送
-
-若需推送到多个微信账号，可在后台添加多UID配置项，修改核心推送函数，循环调用接口推送：
-```php
-// 示例：多UID循环推送
-function bafayun_multi_uid_push($msg) {
-    $uids = array('uid1', 'uid2', 'uid3'); // 多个巴法云UID
-    $options = bafayun_wechat_get_options();
-    foreach ($uids as $uid) {
-        $params = array(
-            'uid' => $uid,
-            'device' => $options['bafayun_device'],
-            'message' => $msg,
-            'group' => $options['bafayun_group']
-        );
-        // 调用接口推送（以提醒接口为例）
-        $api_url = 'https://apis.bemfa.com/vb/wechat/v1/wechatWarnJson';
-        bafayun_wechat_post_request($api_url, $params);
+// 激活插件时添加定时任务（每天凌晨1点）
+register_activation_hook(__FILE__, 'bafayun_add_cron');
+function bafayun_add_cron() {
+    if (!wp_next_scheduled('bafayun_daily_stat_push')) {
+        wp_schedule_event(strtotime('01:00:00'), 'daily', 'bafayun_daily_stat_push');
     }
 }
 ```
 
 ## 🤝 贡献指南
-
-欢迎各位开发者参与贡献，完善插件功能，提交PR前请遵守以下规范：
+欢迎开发者参与贡献，完善插件功能，提交PR前请遵守以下规范：
 1. Fork 本仓库
-2. 创建特性分支：`git checkout -b feature/xxx`（xxx为功能名称，如`feature/timed-push`）
-3. 提交代码：`git commit -m "feat: 新增定时推送功能"`（提交信息遵循Conventional Commits规范）
+2. 创建特性分支：`git checkout -b feature/xxx`（xxx为功能名称，如`feature/multi-uid`）
+3. 提交代码：`git commit -m "feat: 新增多UID推送功能"`（遵循Conventional Commits规范）
 4. 推送分支：`git push origin feature/xxx`
-5. 打开Pull Request，描述功能变更、测试情况，等待审核
+5. 打开Pull Request，详细描述功能变更、测试情况，等待审核
 
-同时，欢迎提交Issue反馈Bug、提出功能建议，反馈时请详细描述问题场景、复现步骤，方便快速定位解决。
+同时欢迎提交Issue反馈Bug、提出功能建议，反馈时请说明**插件版本、WP版本、PHP版本、失败场景、测试推送提示**，方便快速定位解决。
 
 ## 📄 许可证
-
 本项目采用 [GPLv2 许可证](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) 开源（符合WordPress插件开源规范），允许自由使用、修改、分发，前提是：
 - 保留原作者版权信息
 - 修改后的代码同样采用GPLv2许可证开源
 
 ## 🙏 致谢
-
-- 感谢 [巴法云](https://bemfa.com/) 提供微信通知API接口支持
+- 感谢 [巴法云](https://bemfa.com/) 提供微信通知API接口支持，以及完善的官方文档
 - 感谢 WordPress 官方提供的插件开发文档和生态支持
+- 感谢所有1.0版本用户的反馈，为v1.2升级提供核心方向
 
 ## 📞 联系与反馈
-
 - Bug反馈/功能建议：提交 [Issue](https://github.com/liseezn/Bemfa-wechat-notify/issues)
-- 插件使用问题：可参考 [巴法云官方教程](https://bbs.bemfa.com/12)，或在Issue中留言
+- 巴法云官方API文档：[巴法云开发文档](https://cloud.bemfa.com/docs/)
+- 插件使用问题：可在Issue中留言，或参考巴法云官方论坛教程
 
 ---
 
 最后更新时间：2026-02-01  
-插件版本：v1.0
+插件版本：v1.2  
+兼容版本：WP 5.0+、PHP 7.0+、WooCommerce 3.0+
