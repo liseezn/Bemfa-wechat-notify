@@ -3,7 +3,7 @@
  * Plugin Name: 微信通知推送
  * Plugin URI: https://github.com/liseezn/Bemfa-wechat-notify
  * Description: 基于巴法云微信接口的WordPress推送插件，支持设备预警/提醒，后台可视化配置，推送事件开关，一键测试推送，日志开关，POST/GET双请求方式，短代码/函数双调用，完全贴合官方API规范。
- * Version: 1.3
+ * Version: 1.
  * Author: liseezn
  * Author URI: https://github.com/liseezn
  * License: GPLv2 or later
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 }
 
 // ====================== 插件核心常量定义 ======================
-define('BEMFA_WECHAT_VERSION', '1.4');
+define('BEMFA_WECHAT_VERSION', '1.4.1');
 define('BEMFA_WECHAT_PLUGIN_FILE', __FILE__);
 define('BEMFA_WECHAT_LOG_TABLE', 'bemfa_wechat_logs'); // 日志表名
 
@@ -154,7 +154,7 @@ function bemfa_wechat_render_log_page() {
     $total_success = $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE status = 'success'");
     $rate = $total > 0 ? round(($total_success / $total) * 100, 2) : 0;
     ?>
-    <div class="wrap">
+    <div class="wrap" style="max-width:1400px;margin:0 auto;">
         <h1>巴法云推送日志 <span style="font-size:14px;color:#666;">(共 <?php echo $total; ?> 条记录)</span></h1>
         <!-- 筛选表单 -->
         <form method="get" action="<?php echo admin_url('options-general.php'); ?>">
@@ -305,40 +305,40 @@ function bemfa_wechat_register_settings() {
         ['sanitize_callback' => 'bemfa_wechat_sanitize_settings']
     );
 
-    // 注册配置节
-    add_settings_section('bemfa_sec_main', '核心配置（巴法云控制台获取）<span style="color:red;">*</span>', 'bemfa_wechat_sec_main_desc', 'bemfa-wechat-page');
-    add_settings_section('bemfa_sec_event', '自动推送事件开关【6大新增+原生】', 'bemfa_wechat_sec_event_desc', 'bemfa-wechat-page');
-    add_settings_section('bemfa_sec_log', '日志系统配置【专属数据库】', 'bemfa_wechat_sec_log_desc', 'bemfa-wechat-page');
-    add_settings_section('bemfa_sec_advanced', '高级配置（协议/请求）', 'bemfa_wechat_sec_advanced_desc', 'bemfa-wechat-page');
-    add_settings_section('bemfa_sec_test', '一键测试推送', 'bemfa_wechat_sec_test_desc', 'bemfa-wechat-page');
+    // 注册配置节 - 适配标签页：页面名改为 前缀+配置节名
+    add_settings_section('bemfa_sec_main', '核心配置（巴法云控制台获取）<span style="color:red;">*</span>', 'bemfa_wechat_sec_main_desc', 'bemfa-wechat-page-bemfa_sec_main');
+    add_settings_section('bemfa_sec_event', '自动推送事件开关【6大新增+原生】', 'bemfa_wechat_sec_event_desc', 'bemfa-wechat-page-bemfa_sec_event');
+    add_settings_section('bemfa_sec_log', '日志系统配置【专属数据库】', 'bemfa_wechat_sec_log_desc', 'bemfa-wechat-page-bemfa_sec_log');
+    add_settings_section('bemfa_sec_advanced', '高级配置（协议/请求）', 'bemfa_wechat_sec_advanced_desc', 'bemfa-wechat-page-bemfa_sec_advanced');
+    add_settings_section('bemfa_sec_test', '一键测试推送', 'bemfa_wechat_sec_test_desc', 'bemfa-wechat-page-bemfa_sec_test');
 
-    // 核心配置字段
-    add_settings_field('bemfa_field_uid', '巴法云32位UID', 'bemfa_wechat_field_uid', 'bemfa-wechat-page', 'bemfa_sec_main');
-    add_settings_field('bemfa_field_device', '默认设备名', 'bemfa_field_device', 'bemfa-wechat-page', 'bemfa_sec_main');
-    add_settings_field('bemfa_field_group', '消息分组', 'bemfa_field_group', 'bemfa-wechat-page', 'bemfa_sec_main');
+    // 核心配置字段 - 适配标签页
+    add_settings_field('bemfa_field_uid', '巴法云32位UID', 'bemfa_wechat_field_uid', 'bemfa-wechat-page-bemfa_sec_main', 'bemfa_sec_main');
+    add_settings_field('bemfa_field_device', '默认设备名', 'bemfa_field_device', 'bemfa-wechat-page-bemfa_sec_main', 'bemfa_sec_main');
+    add_settings_field('bemfa_field_group', '消息分组', 'bemfa_field_group', 'bemfa-wechat-page-bemfa_sec_main', 'bemfa_sec_main');
 
-    // 【融合】所有推送事件字段（原生+6新增）
-    add_settings_field('bemfa_field_event_post', '新文章发布推送', 'bemfa_wechat_field_event_post', 'bemfa-wechat-page', 'bemfa_sec_event');
-    add_settings_field('bemfa_field_event_comment', '评论审核通过推送', 'bemfa_wechat_field_event_comment', 'bemfa-wechat-page', 'bemfa_sec_event');
-    add_settings_field('bemfa_field_event_comment_new', '新评论提交即时推送', 'bemfa_wechat_field_event_comment_new', 'bemfa-wechat-page', 'bemfa_sec_event');
-    add_settings_field('bemfa_field_event_user', '新用户注册推送', 'bemfa_wechat_field_event_user', 'bemfa-wechat-page', 'bemfa_sec_event');
-    add_settings_field('bemfa_field_event_page', '新页面发布推送', 'bemfa_wechat_field_event_page', 'bemfa-wechat-page', 'bemfa_sec_event');
-    add_settings_field('bemfa_field_event_cpt', '自定义文章发布推送', 'bemfa_wechat_field_event_cpt', 'bemfa-wechat-page', 'bemfa_sec_event');
+    // 【融合】所有推送事件字段（原生+6新增）- 适配标签页
+    add_settings_field('bemfa_field_event_post', '新文章发布推送', 'bemfa_wechat_field_event_post', 'bemfa-wechat-page-bemfa_sec_event', 'bemfa_sec_event');
+    add_settings_field('bemfa_field_event_comment', '评论审核通过推送', 'bemfa_wechat_field_event_comment', 'bemfa-wechat-page-bemfa_sec_event', 'bemfa_sec_event');
+    add_settings_field('bemfa_field_event_comment_new', '新评论提交即时推送', 'bemfa_wechat_field_event_comment_new', 'bemfa-wechat-page-bemfa_sec_event', 'bemfa_sec_event');
+    add_settings_field('bemfa_field_event_user', '新用户注册推送', 'bemfa_wechat_field_event_user', 'bemfa-wechat-page-bemfa_sec_event', 'bemfa_sec_event');
+    add_settings_field('bemfa_field_event_page', '新页面发布推送', 'bemfa_wechat_field_event_page', 'bemfa-wechat-page-bemfa_sec_event', 'bemfa_sec_event');
+    add_settings_field('bemfa_field_event_cpt', '自定义文章发布推送', 'bemfa_wechat_field_event_cpt', 'bemfa-wechat-page-bemfa_sec_event', 'bemfa_sec_event');
     if (class_exists('WooCommerce')) {
-        add_settings_field('bemfa_field_event_woo', 'Woo新订单推送', 'bemfa_wechat_field_event_woo', 'bemfa-wechat-page', 'bemfa_sec_event');
-        add_settings_field('bemfa_field_event_woo_paid', 'Woo订单付款推送', 'bemfa_wechat_field_event_woo_paid', 'bemfa-wechat-page', 'bemfa_sec_event');
-        add_settings_field('bemfa_field_event_woo_complete', 'Woo订单完成推送', 'bemfa_wechat_field_event_woo_complete', 'bemfa-wechat-page', 'bemfa_sec_event');
+        add_settings_field('bemfa_field_event_woo', 'Woo新订单推送', 'bemfa_wechat_field_event_woo', 'bemfa-wechat-page-bemfa_sec_event', 'bemfa_sec_event');
+        add_settings_field('bemfa_field_event_woo_paid', 'Woo订单付款推送', 'bemfa_wechat_field_event_woo_paid', 'bemfa-wechat-page-bemfa_sec_event', 'bemfa_sec_event');
+        add_settings_field('bemfa_field_event_woo_complete', 'Woo订单完成推送', 'bemfa_wechat_field_event_woo_complete', 'bemfa-wechat-page-bemfa_sec_event', 'bemfa_sec_event');
     }
 
-    // 日志系统配置字段
-    add_settings_field('bemfa_field_enable_log', '启用内置数据库日志', 'bemfa_wechat_field_enable_log', 'bemfa-wechat-page', 'bemfa_sec_log');
-    add_settings_field('bemfa_field_enable_error_log', '同时记录服务器error_log', 'bemfa_wechat_field_enable_error_log', 'bemfa-wechat-page', 'bemfa_sec_log');
-    add_settings_field('bemfa_field_log_retention', '日志保留天数', 'bemfa_wechat_field_log_retention', 'bemfa-wechat-page', 'bemfa_sec_log');
-    add_settings_field('bemfa_field_auto_clean', '自动清理旧日志', 'bemfa_wechat_field_auto_clean', 'bemfa-wechat-page', 'bemfa_sec_log');
+    // 日志系统配置字段 - 适配标签页
+    add_settings_field('bemfa_field_enable_log', '启用内置数据库日志', 'bemfa_wechat_field_enable_log', 'bemfa-wechat-page-bemfa_sec_log', 'bemfa_sec_log');
+    add_settings_field('bemfa_field_enable_error_log', '同时记录服务器error_log', 'bemfa_wechat_field_enable_error_log', 'bemfa-wechat-page-bemfa_sec_log', 'bemfa_sec_log');
+    add_settings_field('bemfa_field_log_retention', '日志保留天数', 'bemfa_wechat_field_log_retention', 'bemfa-wechat-page-bemfa_sec_log', 'bemfa_sec_log');
+    add_settings_field('bemfa_field_auto_clean', '自动清理旧日志', 'bemfa_wechat_field_auto_clean', 'bemfa-wechat-page-bemfa_sec_log', 'bemfa_sec_log');
 
-    // 高级配置字段
-    add_settings_field('bemfa_field_http', '使用HTTP协议', 'bemfa_wechat_field_http', 'bemfa-wechat-page', 'bemfa_sec_advanced');
-    add_settings_field('bemfa_field_method', '请求方式', 'bemfa_wechat_field_method', 'bemfa-wechat-page', 'bemfa_sec_advanced');
+    // 高级配置字段 - 适配标签页
+    add_settings_field('bemfa_field_http', '使用HTTP协议', 'bemfa_wechat_field_http', 'bemfa-wechat-page-bemfa_sec_advanced', 'bemfa_sec_advanced');
+    add_settings_field('bemfa_field_method', '请求方式', 'bemfa_wechat_field_method', 'bemfa-wechat-page-bemfa_sec_advanced', 'bemfa_sec_advanced');
 }
 
 function bemfa_wechat_sanitize_settings($input) {
@@ -480,7 +480,9 @@ function bemfa_wechat_api_request($api_type, $params = []) {
     $settings = bemfa_wechat_get_settings();
     $protocol = $settings['use_http'] ? 'http' : 'https';
     $method = strtolower($settings['request_method']);
-    $api_suffix = $api_type === 'alert' ? 'wechatAlert' : 'wechatWarn';
+    // 核心修复：严格遵循官方文档 - POST后缀带Json，GET后缀不带
+    $base_suffix = $api_type === 'alert' ? 'wechatAlert' : 'wechatWarn';
+    $api_suffix = $method === 'post' ? $base_suffix . 'Json' : $base_suffix;
     $api_url = "{$protocol}://apis.bemfa.com/vb/wechat/v1/{$api_suffix}";
 
     // 构造参数
@@ -581,79 +583,144 @@ function bemfa_wechat_alert($message, $params = []) {
     return bemfa_wechat_api_request('alert', $params);
 }
 
-// ====================== 【模块4：后台主页面】- 融合状态卡片+快捷操作+配置+测试 ======================
+// ====================== 【模块4：后台主页面】- 融合状态卡片+快捷操作+配置+测试（全套美化） ======================
 function bemfa_wechat_add_admin_menu() {
     add_options_page(
-        '微信推送',
-        '微信推送',
+        '巴法云微信推送',
+        '巴法云微信推送',
         'manage_options',
         'bemfa-wechat-page',
         'bemfa_wechat_render_page'
     );
 }
 
-// 系统状态检查（配置/日志表/推送统计）
+// 系统状态检查（配置/日志表/推送统计）+ 状态卡片图标
 function bemfa_wechat_system_status() {
     global $wpdb;
     $table_name = $wpdb->prefix . BEMFA_WECHAT_LOG_TABLE;
     $status = [];
     // 检查日志表
     $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
-    $status['db_table'] = ['label'=>'日志表状态','value'=>$table_exists ? '正常' : '缺失','good'=>$table_exists];
+    $status['db_table'] = ['label'=>'日志表状态','value'=>$table_exists ? '正常' : '缺失','good'=>$table_exists,'icon'=>$table_exists ? 'database' : 'error'];
     // 检查配置
     $settings = bemfa_wechat_get_settings();
-    $status['config'] = ['label'=>'UID配置状态','value'=>empty($settings['uid']) ? '未配置（推送失败）' : '已配置','good'=>!empty($settings['uid'])];
+    $status['config'] = ['label'=>'UID配置状态','value'=>empty($settings['uid']) ? '未配置（推送失败）' : '已配置','good'=>!empty($settings['uid']),'icon'=>!empty($settings['uid']) ? 'yes' : 'no'];
     // 检查最近推送
     if ($table_exists) {
         $last_success = $wpdb->get_var("SELECT time FROM $table_name WHERE status='success' ORDER BY time DESC LIMIT 1");
+        $last_success_text = $last_success ? date('Y-m-d H:i:s', strtotime($last_success)) : '暂无成功记录';
+        $last_success_good = $last_success ? (strtotime($last_success) > time() - 86400) : false;
         $status['last_push'] = [
             'label'=>'最近成功推送',
-            'value'=>$last_success ? date('Y-m-d H:i:s', strtotime($last_success)) : '暂无成功记录',
-            'good'=>$last_success ? (strtotime($last_success) > time() - 86400) : false
+            'value'=>$last_success_text,
+            'good'=>$last_success_good,
+            'icon'=>$last_success_good ? 'clock' : 'warning'
         ];
         // 今日推送
         $today_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE DATE(time) = %s", date('Y-m-d')));
-        $status['today_count'] = ['label'=>'今日推送总数','value'=>$today_count . ' 次','good'=>true];
+        $status['today_count'] = ['label'=>'今日推送总数','value'=>$today_count . ' 次','good'=>true,'icon'=>'chart-bar'];
     }
     return $status;
 }
 
+// 后台主页面 - 全套美化：居中+原生标签页+状态卡片+样式适配
 function bemfa_wechat_render_page() {
     if (!current_user_can('manage_options')) wp_die('无权限访问');
     $status = bemfa_wechat_system_status();
+    wp_enqueue_style('wp-tabs');
     ?>
-    <div class="wrap">
-        <h1>微信推送<?php echo BEMFA_WECHAT_VERSION; ?></h1>
-        <!-- 系统状态卡片 -->
-        <div style="display:flex;gap:15px;margin-bottom:20px;flex-wrap:wrap;">
+    <div class="wrap bemfa-wechat-wrap" style="max-width:1200px;margin:0 auto;padding:20px 0;">
+        <h1 class="wp-heading-inline">巴法云微信推送【终极增强版】v<?php echo BEMFA_WECHAT_VERSION; ?></h1>
+        <a href="<?php echo admin_url('options-general.php?page=bemfa-wechat-logs'); ?>" class="page-title-action">
+            <span class="dashicons dashicons-list-view" style="margin-right:4px;"></span>查看推送日志
+        </a>
+        <a href="https://cloud.bemfa.com/" target="_blank" class="page-title-action">
+            <span class="dashicons dashicons-external" style="margin-right:4px;"></span>巴法云控制台
+        </a>
+        <hr class="wp-header-end">
+
+        <!-- 系统状态卡片：居中+美化+图标 -->
+        <div class="bemfa-status-cards" style="display:flex;gap:15px;margin:20px 0;flex-wrap:wrap;">
             <?php foreach ($status as $key => $item): ?>
-                <div style="flex:1;min-width:200px;padding:15px;background:#fff;border:1px solid #ccd0d4;border-radius:4px;">
-                    <div style="font-size:14px;color:#666;margin-bottom:5px;"><?php echo esc_html($item['label']); ?></div>
-                    <div style="font-size:18px;color:<?php echo $item['good'] ? '#46b450' : '#dc3232'; ?>;font-weight:bold;">
+                <div style="flex:1;min-width:220px;padding:20px;background:#fff;border:1px solid #ccd0d4;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                        <div style="font-size:14px;color:#666;font-weight:500;"><?php echo esc_html($item['label']); ?></div>
+                        <span class="dashicons dashicons-<?php echo $item['icon']; ?>" style="color:<?php echo $item['good'] ? '#46b450' : '#dc3232'; ?>;font-size:20px;"></span>
+                    </div>
+                    <div style="font-size:20px;color:<?php echo $item['good'] ? '#46b450' : '#dc3232'; ?>;font-weight:600;line-height:1.4;">
                         <?php echo esc_html($item['value']); ?>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
-        <!-- 快捷操作 -->
-        <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;">
-            <a href="<?php echo admin_url('options-general.php?page=bemfa-wechat-logs'); ?>" class="button">
-                <span class="dashicons dashicons-list-view"></span> 查看推送日志
-            </a>
-            <a href="https://cloud.bemfa.com/tcp/devicemqtt.html" target="_blank" class="button">
-                <span class="dashicons dashicons-external"></span> 前往巴法云控制台
-            </a>
+
+        <!-- WordPress原生标签页：核心配置/自动推送/日志配置/高级配置/一键测试 -->
+        <div class="nav-tab-wrapper wp-clearfix" style="margin:30px 0 20px;">
+            <a href="#bemfa-tab-main" class="nav-tab nav-tab-active" data-tab="bemfa-tab-main">核心配置</a>
+            <a href="#bemfa-tab-event" class="nav-tab" data-tab="bemfa-tab-event">自动推送事件</a>
+            <a href="#bemfa-tab-log" class="nav-tab" data-tab="bemfa-tab-log">日志系统配置</a>
+            <a href="#bemfa-tab-advanced" class="nav-tab" data-tab="bemfa-tab-advanced">高级配置</a>
+            <a href="#bemfa-tab-test" class="nav-tab" data-tab="bemfa-tab-test">一键测试推送</a>
         </div>
-        <!-- 配置表单 -->
-        <form method="post" action="options.php">
-            <?php settings_fields('bemfa_wechat_group'); do_settings_sections('bemfa-wechat-page'); submit_button('保存所有配置', 'primary'); ?>
+
+        <!-- 配置表单：标签页容器 -->
+        <form method="post" action="options.php" style="background:#fff;padding:20px;border:1px solid #ccd0d4;border-radius:8px;">
+            <?php settings_fields('bemfa_wechat_group'); ?>
+            <!-- 核心配置标签 -->
+            <div id="bemfa-tab-main" class="bemfa-tab-content active" style="display:block;">
+                <?php do_settings_sections('bemfa-wechat-page-bemfa_sec_main'); ?>
+            </div>
+            <!-- 自动推送事件标签 -->
+            <div id="bemfa-tab-event" class="bemfa-tab-content" style="display:none;">
+                <?php do_settings_sections('bemfa-wechat-page-bemfa_sec_event'); ?>
+            </div>
+            <!-- 日志系统配置标签 -->
+            <div id="bemfa-tab-log" class="bemfa-tab-content" style="display:none;">
+                <?php do_settings_sections('bemfa-wechat-page-bemfa_sec_log'); ?>
+            </div>
+            <!-- 高级配置标签 -->
+            <div id="bemfa-tab-advanced" class="bemfa-tab-content" style="display:none;">
+                <?php do_settings_sections('bemfa-wechat-page-bemfa_sec_advanced'); ?>
+            </div>
+            <!-- 一键测试推送标签 -->
+            <div id="bemfa-tab-test" class="bemfa-tab-content" style="display:none;padding:10px 0;">
+                <?php bemfa_wechat_render_test_push(); ?>
+            </div>
+            <!-- 保存按钮：居中 -->
+            <div style="margin-top:20px;padding-top:20px;border-top:1px solid #eee;text-align:center;">
+                <?php submit_button('保存所有配置', 'primary large', 'submit', false); ?>
+            </div>
         </form>
-        <!-- 一键测试推送 -->
-        <?php bemfa_wechat_render_test_push(); ?>
     </div>
+
+    <!-- 标签页切换JS + 全局样式 -->
+    <style>
+        .bemfa-tab-content {margin:10px 0;}
+        .nav-tab-active {background:#fff;border-bottom-color:#fff!important;}
+        .bemfa-wechat-wrap .form-table {margin:0;border:none;}
+        .bemfa-wechat-wrap .form-table th {width:200px;padding:15px 10px;border-bottom:1px solid #f0f0f0;}
+        .bemfa-wechat-wrap .form-table td {padding:15px 10px;border-bottom:1px solid #f0f0f0;}
+        .bemfa-wechat-wrap .description {margin:8px 0 0!important;padding:0!important;}
+    </style>
+    <script>
+        jQuery(document).ready(function($){
+            // 标签页切换
+            $('.nav-tab').click(function(e){
+                e.preventDefault();
+                var tab = $(this).data('tab');
+                // 切换标签激活状态
+                $('.nav-tab').removeClass('nav-tab-active');
+                $(this).addClass('nav-tab-active');
+                // 切换内容显示
+                $('.bemfa-tab-content').hide();
+                $('#' + tab).show();
+            });
+        });
+    </script>
     <?php
 }
 
+// 一键测试推送 - 修复重复触发+防重复点击+超时处理
 function bemfa_wechat_render_test_push() {
     $nonce = wp_create_nonce('bemfa_wechat_test_nonce');
     ?>
@@ -669,18 +736,35 @@ function bemfa_wechat_render_test_push() {
     </div>
     <script>
         jQuery(document).ready(function($){
-            $('#bemfa-test-push').click(function(){
-                var btn = $(this), res = $('#bemfa-test-result'), type = $('input[name=bemfa_test_type]:checked').val();
-                btn.prop('disabled',true).text('发送中...');
-                res.html('').css('color','#333');
+            // 单例绑定，避免重复绑定事件导致多次触发
+            $('#bemfa-test-push').off('click').on('click', function(){
+                var btn = $(this), 
+                    res = $('#bemfa-test-result'), 
+                    type = $('input[name=bemfa_test_type]:checked').val();
+                
+                // 防重复点击：禁用按钮+修改文字+清空结果
+                btn.prop('disabled',true).addClass('disabled').text('发送中...');
+                res.html('').css({color:'#333', fontWeight:'bold'});
+                
+                // 发起AJAX请求
                 $.ajax({
-                    url: ajaxurl, type: 'POST',
+                    url: ajaxurl, 
+                    type: 'POST',
                     data: {action:'bemfa_wechat_test_push',test_type:type,nonce:'<?php echo $nonce; ?>'},
+                    timeout: 15000, // 15秒超时兜底
                     success: function(data){
-                        btn.prop('disabled',false).text('发送测试消息');
-                        res.css('color',data.success ? '#46b450' : '#dc3232').html(data.data.msg);
+                        // 恢复按钮状态
+                        btn.prop('disabled',false).removeClass('disabled').text('发送测试消息');
+                        // 显示结果（成功绿色/失败红色）
+                        var color = data.success ? '#46b450' : '#dc3232';
+                        res.css('color', color).html(data.data.msg || '请求完成，无返回信息');
                     },
-                    error: function(){btn.prop('disabled',false).text('发送测试消息');res.css('color','#dc3232').html('网络错误，请前往【推送日志】查看详情');}
+                    error: function(xhr, status, err){
+                        // 超时/网络错误也恢复按钮
+                        btn.prop('disabled',false).removeClass('disabled').text('发送测试消息');
+                        var errMsg = status === 'timeout' ? '请求超时（请检查网络/巴法云接口）' : '网络错误';
+                        res.css('color','#dc3232').html(errMsg + '，请前往【推送日志】查看详情');
+                    }
                 });
             });
         });
