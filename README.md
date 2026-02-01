@@ -1,4 +1,4 @@
-# Bemfa-wechat-notify 【终极增强版】
+# Bemfa-wechat-notify
 ![WordPress Compatible](https://img.shields.io/badge/WordPress-5.0%2B-blue)
 ![PHP Compatible](https://img.shields.io/badge/PHP-7.0%2B-green)
 ![License](https://img.shields.io/badge/License-GPLv2-orange)
